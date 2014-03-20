@@ -1,4 +1,4 @@
-package com.fulldata.cameracapture;
+package mobile.android.mc.imtool;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
