@@ -1,4 +1,4 @@
-package com.fulldata.cameracapture;
+package mobile.android.mc.imtool;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -18,7 +18,8 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
 
-public class CameraServerService extends Service {
+public class CameraServerService extends Service
+{
 	CameraServer mCs = null;
 	WakeLock mWakeLock = null;
 
@@ -26,40 +27,55 @@ public class CameraServerService extends Service {
 	boolean StillbroadCast = false;
 
 	@Override
-	public IBinder onBind(Intent arg0) {
+	public IBinder onBind(Intent arg0)
+	{
 		return null;
 	}
 
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
+	public void onCreate()
+	{
+		Log.d("MC", "create");
+	}
 
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId)
+	{
 		final int port = intent.getIntExtra("PORT_VALUE", 0);
+		Log.d("MC", "start");
 
-		Runnable mBroadcastRunner = new Runnable() {
+		AudioService audioService = new AudioService();
+		audioService.Record();
+
+		Runnable mBroadcastRunner = new Runnable()
+		{
 			@Override
-			public void run() {
+			public void run()
+			{
 				StillbroadCast = true;
 				DatagramSocket ds = null;
-				try {
-
+				try
+				{
 					byte[] data = "I'm Here, as always.".getBytes();
 					DatagramPacket sendPacket = new DatagramPacket(data,
 							data.length,
 							InetAddress.getByName("255.255.255.255"), port);
 					ds = new DatagramSocket();
-					while (StillbroadCast) {
-						try {
-							
+					while (StillbroadCast)
+					{
+						try
+						{
 							ds.send(sendPacket);
-						} catch (Exception e) {
+						} catch (Exception e)
+						{
 						}
 						Thread.sleep(1000);
 					}
-				} catch (Exception e) {
-				}
-				finally
+				} catch (Exception e)
 				{
-					if(ds!=null)
+				} finally
+				{
+					if (ds != null)
 					{
 						ds.close();
 					}
@@ -71,7 +87,8 @@ public class CameraServerService extends Service {
 		mUdpBroadCastThread.start();
 
 		mCs = new CameraServer();
-		if (mCs.Listening(port)) {
+		if (mCs.Listening(port))
+		{
 			mCs.start();
 		}
 
@@ -81,31 +98,40 @@ public class CameraServerService extends Service {
 	}
 
 	@Override
-	public void onDestroy() {
+	public void onDestroy()
+	{
+		Log.d("MC", "destroy");
 		releaseWakeLock();
 		mCs.onDestroy();
 		StillbroadCast = false;
-		try {
+		try
+		{
 			mCs.join();
 			mUdpBroadCastThread.join();
-		} catch (Exception e) {
+		} catch (Exception e)
+		{
 		}
 	}
 
-	private void acquireWakeLock() {
+	private void acquireWakeLock()
+	{
 
-		if (null == mWakeLock) {
+		if (null == mWakeLock)
+		{
 			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 			mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK
 					| PowerManager.ON_AFTER_RELEASE, "LOCK");
-			if (null != mWakeLock) {
+			if (null != mWakeLock)
+			{
 				mWakeLock.acquire();
 			}
 		}
 	}
 
-	private void releaseWakeLock() {
-		if (null != mWakeLock) {
+	private void releaseWakeLock()
+	{
+		if (null != mWakeLock)
+		{
 			mWakeLock.release();
 			mWakeLock = null;
 		}

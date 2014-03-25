@@ -1,4 +1,6 @@
-package com.fulldata.cameracapture;
+package mobile.android.mc.imtool;
+
+import com.fulldata.cameracapture.R;
 
 import android.app.Activity;
 import android.content.Context;
