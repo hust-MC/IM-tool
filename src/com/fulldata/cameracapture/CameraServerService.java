@@ -54,9 +54,7 @@ public class CameraServerService extends Service {
 						} catch (Exception e) {
 						}
 						Thread.sleep(1000);
-
 					}
-
 				} catch (Exception e) {
 				}
 				finally
